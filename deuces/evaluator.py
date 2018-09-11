@@ -126,7 +126,7 @@ class Evaluator(object):
         """
         return float(hand_rank) / float(LookupTable.MAX_HIGH_CARD)
 
-    def hand_summary(self, board, hands):
+    def hand_summary(self, board, players, print=print):
         """
         Gives a sumamry of the hand with ranks as time proceeds.
 
@@ -135,8 +135,8 @@ class Evaluator(object):
         """
 
         assert len(board) == 5, "Invalid board length"
-        for hand in hands:
-            assert len(hand) == 2, "Inavlid hand length"
+        for player in players:
+            assert len(player.hand) == 2, "Inavlid hand length"
 
         line_length = 10
         stages = ["FLOP", "TURN", "RIVER"]
@@ -147,7 +147,8 @@ class Evaluator(object):
 
             best_rank = 7463  # rank one worse than worst hand
             winners = []
-            for player, hand in enumerate(hands):
+            for player in players:
+                hand = player.hand
 
                 # evaluate current board position
                 rank = self.evaluate(hand, board[:(i + 3)])
@@ -156,7 +157,7 @@ class Evaluator(object):
 
                 # higher better here
                 percentage = 1.0 - self.get_five_card_rank_percentage(rank)
-                print("Player %d hand = %s, percentage rank among all hands = %f" % (player + 1, class_string, percentage))  # noqa E501
+                print("%s's hand = %s, percentage rank among all hands = %f" % (player.name, class_string, percentage))  # noqa E501
 
                 # detect winner
                 if rank == best_rank:
@@ -169,17 +170,19 @@ class Evaluator(object):
             # if we're not on the river
             if i != stages.index("RIVER"):
                 if len(winners) == 1:
-                    print("Player %d hand is currently winning.\n" % (winners[0] + 1,))  # noqa E501
+                    print("%s's hand is currently winning.\n" % (winners[0].name,))  # noqa E501
                 else:
-                    print("Players %s are tied for the lead.\n" % [x + 1 for x in winners])  # noqa E501
+                    print("%s are tied for the lead.\n" % str([x.name for x in winners]))  # noqa E501
 
             # otherwise on all other streets
             else:
                 print()
                 print(("=" * line_length) + " HAND OVER " + ("=" * line_length))  # noqa E501
                 if len(winners) == 1:
-                    print("Player %d is the winner with a %s\n" % (
-                        winners[0] + 1, self.class_to_string(self.get_rank_class(self.evaluate(hands[winners[0]], board)))))  # noqa E501
+                    print("%s is the winner with a %s\n" % (
+                        winners[0].name, self.class_to_string(self.get_rank_class(self.evaluate(winners[0].hand, board)))))  # noqa E501
                 else:
-                    print("Players %s tied for the win with a %s\n" % (
-                        winners, self.class_to_string(self.get_rank_class(self.evaluate(hands[winners[0]], board)))))  # noqa E501
+                    print("%s tied for the win with a %s\n" % (
+                        str([x.name for x in winners]), self.class_to_string(self.get_rank_class(self.evaluate(winners[0].hand, board)))))  # noqa E501
+
+            return winners
