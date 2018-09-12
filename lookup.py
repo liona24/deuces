@@ -168,7 +168,7 @@ class LookupTable(object):
         """
         Pair, Two Pair, Three of a Kind, Full House, and 4 of a Kind.
         """
-        backwards_ranks = range(len(Card.INT_RANKS) - 1, -1, -1)
+        backwards_ranks = list(range(len(Card.INT_RANKS) - 1, -1, -1))
 
         # 1) Four of a Kind
         rank = LookupTable.MAX_STRAIGHT_FLUSH + 1
