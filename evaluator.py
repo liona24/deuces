@@ -185,4 +185,4 @@ class Evaluator(object):
                     print("%s tied for the win with a %s\n" % (
                         str([x.name for x in winners]), self.class_to_string(self.get_rank_class(self.evaluate(winners[0].hand, board)))))  # noqa E501
 
-            return winners
+        return winners
