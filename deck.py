@@ -20,11 +20,11 @@ class Deck:
 
     def draw(self, n=1):
         if n == 1:
-            return self.cards.pop(0)
+            return [ self.cards.pop(0) ]
 
         cards = []
         for i in range(n):
-            cards.append(self.draw())
+            cards.extend(self.draw())
         return cards
 
     def __str__(self):
@@ -37,7 +37,7 @@ class Deck:
 
         # create the standard 52 card deck
         for rank in Card.STR_RANKS:
-            for suit, val in Card.CHAR_SUIT_TO_INT_SUIT.iteritems():
+            for suit, val in Card.CHAR_SUIT_TO_INT_SUIT.items():
                 Deck._FULL_DECK.append(Card.new(rank + suit))
 
         return list(Deck._FULL_DECK)
